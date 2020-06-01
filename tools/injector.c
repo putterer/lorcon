@@ -58,6 +58,7 @@ void usage(char *argv[]) {
     printf("\t%s -i wlan0 -c 6HT40+ -m 0 -b 0 -g 0 -n 1000\n\n", argv[0]);
 }
 int main(int argc, char *argv[]) {
+    printf("Running modified injector...\n");
     char *interface = NULL;
     unsigned int lcode = 0;
     unsigned int npackets = 100;
@@ -90,14 +91,13 @@ int main(int argc, char *argv[]) {
 
     uint8_t *bmac = "\x00\xDE\xAD\xBE\xEF\x00";
 
-//    uint8_t *RA_MAC = "\x04\xF0\x21\x32\xBD\xA5";
     uint8_t RA_MAC[6];
-    RA_MAC[0] = 0x04;
-    RA_MAC[1] =0xF0;
-    RA_MAC[2] =0x21;
-    RA_MAC[3] =0x32;
-    RA_MAC[4] =0xBD;
-    RA_MAC[5] =0xA5;
+    RA_MAC[0] = 0x00; // 00:16:ea:12:34:56
+    RA_MAC[1] = 0x16;
+    RA_MAC[2] = 0xEA;
+    RA_MAC[3] = 0x12;
+    RA_MAC[4] = 0x34;
+    RA_MAC[5] = 0x56;
     uint8_t *TA_MAC;
     uint8_t *DA_MAC = RA_MAC;
     uint8_t *BSSID_MAC = bmac;
