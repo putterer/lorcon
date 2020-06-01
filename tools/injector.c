@@ -62,6 +62,8 @@ int main(int argc, char *argv[]) {
     unsigned int lcode = 0;
     unsigned int npackets = 100;
     unsigned int MCS = 0;
+	
+	this build should be broken
 
     int value[6];
     int c,i,tmp;
