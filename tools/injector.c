@@ -247,8 +247,7 @@ int main(int argc, char *argv[]) {
     DESIRED_TA_MAC[5] = 0x56;
     
     printf("[+]\t Setting desired MAC: %02x:%02x:%02x:%02x:%02x:%02x \n",TA_MAC[0],TA_MAC[1],TA_MAC[2],TA_MAC[3],TA_MAC[4],TA_MAC[5]);
-    if(lorcon_set_hwmac(context, 6, &DESIRED_TA_MAC) < 0) {
-        printf();
+    if(lorcon_set_hwmac(context, 6, DESIRED_TA_MAC) < 0) {
         printf("[!]\t COULD NOT SET HW MAC ADDRESS!\n");
     }
 
