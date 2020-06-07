@@ -33,6 +33,7 @@
 #include <string.h>
 #include <sys/time.h>
 #include <arpa/inet.h>
+#include <errno.h>
 
 #include <lorcon2/lorcon.h>
 #include <lorcon2/lorcon_forge.h>
@@ -336,8 +337,12 @@ int main(int argc, char *argv[]) {
 
         lorcon_packet_set_mcs(txpack, 1, MCS, GI, BW);
 		
-        if (lorcon_inject(context,txpack) < 0 ) 
+        if (lorcon_inject(context,txpack) < 0 ) {
+	    printf("ERROR: cannot inject\n");
+            int retcode = errno;
+            perror("Inject");
             return -1;
+	}
 
         usleep(interval * 1000);
 
