@@ -53,6 +53,8 @@ void usage(char *argv[]) {
     printf("\t-g <guard_interval>   Guard interval\n");
     printf("\t-n <count>            Number of packets at each MCS to send\n");
     printf("\t-d <delay>            Interframe delay\n");
+    printf("\t-a <mac>              HWAdress of RX\n");
+    printf("\t-t <mac>              HWAdress of TX\n");
 
     printf("\nExample:\n");
     printf("\t%s -i wlan0 -c 6HT40+ -m 0 -b 0 -g 0 -n 1000\n\n", argv[0]);
@@ -101,6 +103,15 @@ int main(int argc, char *argv[]) {
     uint8_t *TA_MAC;
     uint8_t *DA_MAC = RA_MAC;
     uint8_t *BSSID_MAC = bmac;
+    
+    uint8_t DESIRED_TA_MAC[6];
+    //DESIRED_TA_MAC[0] = 0x00; // 00:16:ea:12:34:56
+    //DESIRED_TA_MAC[1] = 0x16;
+    //DESIRED_TA_MAC[2] = 0xEA;
+    //DESIRED_TA_MAC[3] = 0x12;
+    //DESIRED_TA_MAC[4] = 0x34;
+    //DESIRED_TA_MAC[5] = 0x56;
+    uint8_t setDesiredTXMac = 0;
 
     uint8_t fcflags = 3;
     uint8_t fragement = 3;
@@ -131,7 +142,7 @@ int main(int argc, char *argv[]) {
     printf ("%s - packet injector NEW!\n", argv[0]);
     printf ("-----------------------------------------------------\n\n");
 
-    while ((c = getopt(argc, argv, "hi:c:m:b:g:n:d:a:")) != EOF) {
+    while ((c = getopt(argc, argv, "hi:c:m:b:g:n:d:a:t:")) != EOF) {
 	switch (c) {
 	case 'i': 
 		interface = strdup(optarg);
@@ -179,16 +190,28 @@ int main(int argc, char *argv[]) {
 		
 		printf("Read MAC, num:%d\n",tmp);
 		if (6 == tmp ){
-			printf("Read MAC, entering loop\n");
 			for(i = 0; i < 6; i++){
-				printf("Read MAC, loop index:%d\n",i);
 				RA_MAC[i] = (uint8_t)value[i];	
 			}
 		}else{
 		    printf("ERROR: Unable to parse MAC address\n");
 		    return -1;
 		}
-		break;	
+		break;
+        case 't':
+		//if (6 == sscanf(optarg, "%x:%x:%x:%x:%x:%x", &value[0],&value[1],&value[2],&value[3],&value[4],&value[5]) ){
+		tmp = sscanf(optarg, "%x:%x:%x:%x:%x:%x", &value[0],&value[1],&value[2],&value[3],&value[4],&value[5]);
+		
+		if (6 == tmp ){
+			setDesiredTXMac = 1;
+			for(i = 0; i < 6; i++){
+				DESIRED_TA_MAC[i] = (uint8_t)value[i];	
+			}
+		}else{
+		    printf("ERROR: Unable to parse MAC address\n");
+		    return -1;
+		}
+		break;
 	case 'h':
 		printf("ERROR: cannot parse the input\n");
 		usage(argv);
@@ -237,18 +260,12 @@ int main(int argc, char *argv[]) {
 	printf("[+]\t Monitor Mode VAP: %s\n\n",lorcon_get_vap(context));
 	lorcon_free_driver_list(driver);
     }
-	
-    uint8_t DESIRED_TA_MAC[6];
-    DESIRED_TA_MAC[0] = 0x00; // 00:16:ea:12:34:56
-    DESIRED_TA_MAC[1] = 0x16;
-    DESIRED_TA_MAC[2] = 0xEA;
-    DESIRED_TA_MAC[3] = 0x12;
-    DESIRED_TA_MAC[4] = 0x34;
-    DESIRED_TA_MAC[5] = 0x56;
     
-    printf("[+]\t Setting desired MAC: %02x:%02x:%02x:%02x:%02x:%02x \n",TA_MAC[0],TA_MAC[1],TA_MAC[2],TA_MAC[3],TA_MAC[4],TA_MAC[5]);
-    if(lorcon_set_hwmac(context, 6, DESIRED_TA_MAC) < 0) {
-        printf("[!]\t COULD NOT SET HW MAC ADDRESS!\n");
+    if(setDesiredTXMac) {
+        printf("[+]\t Setting desired MAC: %02x:%02x:%02x:%02x:%02x:%02x \n",DESIRED_TA_MAC[0],DESIRED_TA_MAC[1],DESIRED_TA_MAC[2],DESIRED_TA_MAC[3],DESIRED_TA_MAC[4],DESIRED_TA_MAC[5]);
+        if(lorcon_set_hwmac(context, 6, DESIRED_TA_MAC) < 0) {
+            printf("[!]\t COULD NOT SET HW MAC ADDRESS!\n");
+        }
     }
 
     // Get the MAC of the radio
