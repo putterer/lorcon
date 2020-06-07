@@ -237,6 +237,20 @@ int main(int argc, char *argv[]) {
 	printf("[+]\t Monitor Mode VAP: %s\n\n",lorcon_get_vap(context));
 	lorcon_free_driver_list(driver);
     }
+	
+    uint8_t DESIRED_TA_MAC[6];
+    DESIRED_TA_MAC[0] = 0x00; // 00:16:ea:12:34:56
+    DESIRED_TA_MAC[1] = 0x16;
+    DESIRED_TA_MAC[2] = 0xEA;
+    DESIRED_TA_MAC[3] = 0x12;
+    DESIRED_TA_MAC[4] = 0x34;
+    DESIRED_TA_MAC[5] = 0x56;
+    
+    printf("[+]\t Setting desired MAC: %02x:%02x:%02x:%02x:%02x:%02x \n",TA_MAC[0],TA_MAC[1],TA_MAC[2],TA_MAC[3],TA_MAC[4],TA_MAC[5]);
+    if(lorcon_set_hwmac(context, 6, &DESIRED_TA_MAC) < 0) {
+        printf();
+        printf("[!]\t COULD NOT SET HW MAC ADDRESS!\n");
+    }
 
     // Get the MAC of the radio
     if (lorcon_get_hwmac(context, &TA_MAC) <= 0) {
