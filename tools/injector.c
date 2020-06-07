@@ -323,7 +323,7 @@ int main(int argc, char *argv[]) {
         gettimeofday(&time, NULL);
         timestamp = time.tv_sec * 1000000 + time.tv_usec;
 
-        lcpf_data(metapack,fcflags,duration,RA_MAC,TA_MAC,RA_MAC,TA_MAC,fragement,sequence);
+        lcpf_data(metapack,fcflags,duration,RA_MAC,TA_MAC,RA_MAC,fragement,sequence,TA_MAC);
 
 
         lcpf_add_ie(metapack, 0, strlen("Packet_Injection"), "Packet_Injection");
